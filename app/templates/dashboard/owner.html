@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+
+{% block title %}Business Dashboard - CapeBiz Connect{% endblock %}
+
+{% block extra_css %}
+<style>
+    .stats-card {
+        border-radius: 10px;
+        border: none;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        transition: transform 0.2s;
+    }
+    .stats-card:hover {
+        transform: translateY(-5px);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Business Dashboard</h1>
+    <a href="{{ url_for('business.add_business') }}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Add New Business
+    </a>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card stats-card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-grow-1">
+                        <h4 class="card-title">{{ businesses|length }}</h4>
+                        <p class="card-text">Total Businesses</p>
+                    </div>
+                    <div>
+                        <i class="bi bi-building fs-1 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stats-card bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-grow-1">
+                        <h4 class="card-title">{{ businesses|selectattr('is_approved')|list|length }}</h4>
+                        <p class="card-text">Approved Listings</p>
+                    </div>
+                    <div>
+                        <i class="bi bi-check-circle fs-1 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stats-card bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-grow-1">
+                        <h4 class="card-title">{{ businesses|selectattr('is_featured')|list|length }}</h4>
+                        <p class="card-text">Featured Listings</p>
+                    </div>
+                    <div>
+                        <i class="bi bi-star fs-1 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stats-card bg-warning text-dark">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-grow-1">
+                        <h4 class="card-title">{{ businesses|rejectattr('is_approved')|list|length }}</h4>
+                        <p class="card-text">Pending Approval</p>
+                    </div>
+                    <div>
+                        <i class="bi bi-clock fs-1 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Your Businesses</h5>
+            </div>
+            <div class="card-body">
+                {% if businesses %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Business Name</th>
+                                <th>Category</th>
+                                <th>Town</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for business in businesses %}
+                            <tr>
+                                <td>{{ business.name }}</td>
+                                <td>{{ business.category }}</td>
+                                <td>{{ business.town }}</td>
+                                <td>
+                                    {% if business.is_approved %}
+                                        <span class="badge bg-success">Approved</span>
+                                    {% else %}
+                                        <span class="badge bg-warning">Pending</span>
+                                    {% endif %}
+                                    
+                                    {% if business.is_featured %}
+                                        <span class="badge bg-info">Featured</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="{{ url_for('main.business_page', business_id=business.id) }}" 
+                                           class="btn btn-outline-primary" title="View">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="{{ url_for('business.edit_business', business_id=business.id) }}" 
+                                           class="btn btn-outline-secondary" title="Edit">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a href="{{ url_for('dashboard.business_details', business_id=business.id) }}" 
+                                           class="btn btn-outline-info" title="Analytics">
+                                            <i class="bi bi-graph-up"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="bi bi-building fs-1 text-muted d-block mb-2"></i>
+                    <p class="text-muted">You haven't added any businesses yet.</p>
+                    <a href="{{ url_for('business.add_business') }}" class="btn btn-primary">Add Your First Business</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Recent Payments</h5>
+            </div>
+            <div class="card-body">
+                {% if payments %}
+                <div class="list-group list-group-flush">
+                    {% for payment in payments %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <small class="d-block">R{{ "%.2f"|format(payment.amount) }}</small>
+                            <small class="text-muted">{{ payment.payment_type|title }}</small>
+                        </div>
+                        <span class="badge bg-{{ 'success' if payment.payment_status == 'completed' else 'warning' }}">
+                            {{ payment.payment_status }}
+                        </span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-muted">No recent payments.</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('business.add_business') }}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Add New Business
+                    </a>
+                    <a href="{{ url_for('payment.subscription_plans') }}" class="btn btn-outline-primary">
+                        <i class="bi bi-star"></i> Upgrade Subscription
+                    </a>
+                    <a href="{{ url_for('main.search') }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-search"></i> Browse Businesses
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
