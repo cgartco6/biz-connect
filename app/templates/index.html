@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="hero-section bg-primary text-white py-5 mb-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h1 class="display-4 fw-bold">Discover Western Cape Businesses</h1>
+                <p class="lead">From home-based entrepreneurs to large enterprises, find everything you need in one directory.</p>
+                <div class="d-flex gap-2 mt-4">
+                    <a href="{{ url_for('main.search') }}" class="btn btn-light btn-lg">Browse Businesses</a>
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-outline-light btn-lg">List Your Business</a>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <img src="{{ url_for('static', filename='img/hero-image.png') }}" alt="Western Cape Businesses" class="img-fluid">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            <h2>How It Works</h2>
+            <p class="lead">Simple steps to get your business discovered</p>
+        </div>
+    </div>
+    
+    <div class="row mb-5">
+        <div class="col-md-4 text-center">
+            <div class="bg-light p-4 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                <i class="bi bi-plus-circle fs-1 text-primary"></i>
+            </div>
+            <h4>1. Create Listing</h4>
+            <p>Add your business with details, photos, and services offered.</p>
+        </div>
+        <div class="col-md-4 text-center">
+            <div class="bg-light p-4 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                <i class="bi bi-eye fs-1 text-primary"></i>
+            </div>
+            <h4>2. Get Discovered</h4>
+            <p>Customers find your business through search and categories.</p>
+        </div>
+        <div class="col-md-4 text-center">
+            <div class="bg-light p-4 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                <i class="bi bi-graph-up fs-1 text-primary"></i>
+            </div>
+            <h4>3. Grow Your Business</h4>
+            <p>Use boosts and premium features to increase visibility.</p>
+        </div>
+    </div>
+
+    {% if featured_businesses %}
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2>Featured Businesses</h2>
+            <p>Discover some of our premium listed businesses</p>
+        </div>
+        
+        {% for business in featured_businesses %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <img src="{{ business.logo or url_for('static', filename='img/placeholder-business.jpg') }}" 
+                     class="card-img-top" alt="{{ business.name }}" style="height: 200px; object-fit: cover;">
+                <div class="card-body">
+                    <h5 class="card-title">{{ business.name }}</h5>
+                    <p class="card-text">{{ business.description|truncate(100) }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">{{ business.town }}</small>
+                        <a href="{{ url_for('main.business_page', business_id=business.id) }}" class="btn btn-sm btn-primary">View Details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            <h2>Popular Categories</h2>
+            <p>Browse businesses by category</p>
+        </div>
+        
+        <div class="col-12">
+            <div class="d-flex flex-wrap gap-2 justify-content-center">
+                {% for category in categories|sort %}
+                <a href="{{ url_for('main.category_page', category_name=category) }}" class="btn btn-outline-primary">
+                    {{ category }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mx-auto text-center">
+            <div class="card bg-light">
+                <div class="card-body py-5">
+                    <h3>Ready to Get Listed?</h3>
+                    <p>Join hundreds of businesses already on CapeBiz Connect</p>
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg">Get Started for Free</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
