@@ -1,0 +1,54 @@
+/* Mobile-first responsive styles */
+@media (max-width: 768px) {
+    .hero-section .display-4 {
+        font-size: 2rem;
+    }
+    
+    .hero-section .lead {
+        font-size: 1rem;
+    }
+    
+    .btn-lg {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .stats-card .fs-1 {
+        font-size: 1.5rem !important;
+    }
+    
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+    
+    .navbar-brand img {
+        height: 30px;
+    }
+}
+
+@media (max-width: 576px) {
+    .container {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .btn-group .btn {
+        padding: 0.25rem 0.5rem;
+    }
+}
+
+/* Print styles */
+@media print {
+    .navbar, .btn, footer {
+        display: none !important;
+    }
+    
+    .card {
+        border: 1px solid #ddd !important;
+        box-shadow: none !important;
+    }
+}
